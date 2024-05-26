@@ -5,8 +5,6 @@
   Modifications to doMagic by cyllective (https://github.com/cyllective)
 ]#
 
-import os
-import strformat
 import winim/lean
 
 # If you prefer to not pass the .def file via CLI during compilation uncomment the line below, and replace with actual filename
@@ -15,9 +13,21 @@ import winim/lean
 proc NimMain() {.cdecl, importc.}
 
 proc doMagic(lpParameter: LPVOID) : DWORD {.stdcall.} =
-  var username = getEnv("USERNAME")
-  MessageBox(0, fmt"{username} shot first", "Nim", 0)
-  return 0
+    # whoami from https://github.com/chvancooten/NimPlant
+    var 
+        username: string
+        buf : array[257, TCHAR]
+        lpBuf : LPWSTR = addr buf[0]
+        pcbBuf : DWORD = int32(len(buf))
+
+    discard GetUserName(lpBuf, &pcbBuf)
+    for character in buf:
+        if character == 0: break
+        username.add(char(character))
+
+    var f = open("C:\\Temp\\proof.txt", FileMode.fmWrite)
+    f.write(username)
+    f.close()
 
 proc DllMain(hinstDLL: HINSTANCE, fdwReason: DWORD, lpvReserved: LPVOID) : BOOL {.stdcall, exportc, dynlib.} =
   NimMain() # You must manually import and start Nim's garbage collector if you define you're own DllMain
