@@ -1,9 +1,27 @@
 # nimproxydll
-A Docker container for [byt3bl33d3r/NimDllSideload](https://github.com/byt3bl33d3r/NimDllSideload).
+
+![Build Status](https://img.shields.io/github/actions/workflow/status/cyllective/nimproxydll/ghcr.yaml)
+
+A Docker container for [byt3bl33d3r/NimDllSideload](https://github.com/byt3bl33d3r/NimDllSideload)
 
 ## Usage
-+ Obtain the DLL(s) you are trying to proxy and put them into the `input` folder
-+ Adjust the payload in `dllproxy.nim`'s `doMagic()`
-+ `docker build --build-arg userid=$(id -u) -t nimproxydll .`
-+ `docker run --rm -v $(pwd):/app nimproxydll`
-+ Find your proxied DLL(s) with legit names in the `output` folder alongside the original DLL(s) with random names
+
+**Default payload**  
+
+If you are happy with the default payload, which writes to `C:\proof.txt`, you can use the public image.
+
+```sh
+mkdir input # place you DLLs here
+mkdir output
+
+docker run --rm -v $(pwd)/input:/input -v $(pwd)/output:/output ghcr.io/cyllective/nimproxydll
+```
+
+**Custom payload**  
+
+To have a custom payload trigger, adjust the code in `dllproxy.nim`'s `doMagic` function. Place your DLLs into the `input` directory and run:
+
+```sh
+docker build --build-arg userid=$(id -u) -t nimproxydll .
+docker run --rm -v $(pwd)/input:/input -v $(pwd)/output:/output nimproxydll
+```

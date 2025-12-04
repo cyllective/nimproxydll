@@ -5,6 +5,9 @@ RUN apt install build-essential gcc-mingw-w64 -y --no-install-recommends
 RUN apt install python3-pefile python3-future -y --no-install-recommends
 
 RUN mkdir /app
+COPY dllproxy.nim /app
+COPY gen_def.py /app/
+COPY entrypoint.sh /app/
 
 ARG USERID=1000
 RUN useradd -m -s /bin/sh -u ${USERID} nim
@@ -15,4 +18,4 @@ RUN nimble install winim -y
 
 WORKDIR /app
 
-ENTRYPOINT ["make", "rebuild"]
+ENTRYPOINT ["sh", "/app/entrypoint.sh"]

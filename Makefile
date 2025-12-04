@@ -1,26 +1,9 @@
-#vpath %.dll .
+.PHONY: docker-image
+docker-image:
+	docker build . --tag ghcr.io/cyllective/nimproxydll:${shell git rev-parse --short HEAD}
+	docker build . --tag ghcr.io/cyllective/nimproxydll:latest
 
-NIMFLAGS = -d=release -d=mingw -d=strip --opt=size --mm=orc --threads=on
-#NIMFLAGS = -d=debug -d=mingw --embedsrc=on --hints=on
-
-DLLS = $(notdir $(wildcard input/*.dll))
-RANDOM = $(shell python3 -c 'import string,random; print("".join(random.choice(string.ascii_letters) for i in range(8)))' )
-export RANDOM
-
-.PHONY: clean
-.PHONY: build
-
-default: build
-
-clean:
-	rm -f output/*.dll
-	rm -rf input/*.def
-
-build: $(DLLS)
-
-rebuild: clean build
-
-%.dll: dllproxy.nim
-	cp input/$*.dll output/$$RANDOM.dll
-	python3 gen_def.py output/$$RANDOM.dll > input/$*.def
-	nim c $(NIMFLAGS) --app=lib --nomain --cpu=amd64 --passl:input/$*.def --out=output/$*.dll dllproxy.nim
+.PHONY: docker-push
+docker-push:
+	docker push ghcr.io/cyllective/nimproxydll:${shell git rev-parse --short HEAD}
+	docker push ghcr.io/cyllective/nimproxydll:latest
