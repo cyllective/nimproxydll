@@ -6,6 +6,8 @@ on:
   
 jobs:
   push-store-image:
+    permissions:
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
