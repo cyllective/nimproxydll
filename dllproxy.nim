@@ -25,7 +25,7 @@ proc doMagic(lpParameter: LPVOID) : DWORD {.stdcall.} =
         if character == 0: break
         username.add(char(character))
 
-    var f = open("C:\\Temp\\proof.txt", FileMode.fmWrite)
+    var f = open("C:\\proof.txt", FileMode.fmWrite)
     f.write(username)
     f.close()
 
